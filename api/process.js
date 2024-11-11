@@ -13,7 +13,7 @@ export default function handler(req, res) {
             const result = performDESEncryption(DES, key);
             res.status(200).json({ result });
         } else if (code && length) {
-            const result = f(code, length);
+            const result = f(new Uint8Array(code), length);
             res.status(200).json({ result });
         } else {
             res.status(400).json({ error: 'Invalid input' });
