@@ -51,7 +51,7 @@ function g(i, i2) {
 }
 
 function performDESEncryption(text, key) {
-    const keyHex = CryptoJS.enc.Utf8.parse(key);
+    const keyHex = CryptoJS.enc.Hex.parse(key);
     const messageHex = CryptoJS.enc.Utf8.parse(text);
     const encrypted = CryptoJS.DES.encrypt(messageHex, keyHex, {
         mode: CryptoJS.mode.ECB,
