@@ -51,20 +51,26 @@ function g(i, i2) {
 }
 
 function performTripleDESEncryption(text, key) {
+    // 将text转为hex字符串
+    const textHex = CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Hex);
+
     // 补零到8字节的倍数
-    const paddingLength = 8 - (text.length % 8);
+    const paddingLength = 8 - (textHex.length % 8);
     if (paddingLength !== 8) {
-        text += Array(paddingLength + 1).join('\0');
+        textHex += Array(paddingLength).join('00');
     }
 
+    // 将hex字符串转为字节
+    const messageHex = CryptoJS.enc.Hex.parse(textHex);
+
     const keyHex = CryptoJS.enc.Hex.parse(key);
-    const messageHex = CryptoJS.enc.Utf8.parse(text);
     const encrypted = CryptoJS.TripleDES.encrypt(messageHex, keyHex, {
         mode: CryptoJS.mode.ECB,
         padding: CryptoJS.pad.NoPadding // 不使用PKCS#7填充
     });
     return encrypted.ciphertext.toString(CryptoJS.enc.Hex);
 }
+
 
 
 function f(Code, length) {
