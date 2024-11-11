@@ -51,13 +51,35 @@ function g(i, i2) {
 }
 
 function performTripleDESEncryption(text, key) {
-    // 将text转为hex字符串
-    const textHex = CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Hex);
+    // 将text转为GBK2312编码的字节流
+    const textBytes = [];
+    for (let i = 0; i < text.length; i++) {
+        const codePoint = text.charCodeAt(i);
+        if (codePoint < 0x80) {
+            textBytes.push(codePoint);
+        } else if (codePoint < 0x10000) {
+            const bytes = [
+                (codePoint >> 8) & 0xFF,
+                codePoint & 0xFF
+            ];
+            textBytes.push(...bytes);
+        } else {
+            const bytes = [
+                (codePoint >> 16) & 0xFF,
+                (codePoint >> 8) & 0xFF,
+                codePoint & 0xFF
+            ];
+            textBytes.push(...bytes);
+        }
+    }
+
+    // 将字节流转为hex字符串
+    const textHex = textBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');
 
     // 补零到8字节的倍数
-    const paddingLength = 8 - (textHex.length % 8);
+    const paddingLength = 8 - (textHex.length % 16); // 注意：这里是16，也就是8字节的倍数
     if (paddingLength !== 8) {
-        textHex += Array(paddingLength).join('00');
+        textHex += Array(paddingLength * 2).join('00');
     }
 
     // 将hex字符串转为字节
@@ -70,6 +92,7 @@ function performTripleDESEncryption(text, key) {
     });
     return encrypted.ciphertext.toString(CryptoJS.enc.Hex);
 }
+
 
 
 
