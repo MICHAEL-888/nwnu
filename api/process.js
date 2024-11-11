@@ -10,7 +10,7 @@ export default function handler(req, res) {
             const result = calculateClientIDResult(clientID);
             res.status(200).json({ result });
         } else if (DES && key) {
-            const result = performDESEncryption(DES, key);
+            const result = performTripleDESEncryption(DES, key);
             res.status(200).json({ result });
         } else if (code && length) {
             const result = f(stringToUint8Array(code), length);
