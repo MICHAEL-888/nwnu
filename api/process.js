@@ -54,9 +54,12 @@ function g(i, i2) {
 
 function performTripleDESEncryption(text, key) {
     const keyHex = CryptoJS.enc.Hex.parse(key);
-    const messageHex = CryptoJS.enc.Utf8.parse(text);
+    const gbkEncodedText = iconv.encode(text, 'gbk');
 
-    // 确保消息长度是8字节的倍数
+    // Convert GBK encoded buffer to WordArray
+    const messageHex = CryptoJS.enc.Hex.parse(gbkEncodedText.toString('hex'));
+
+    // Ensure message length is a multiple of 8 bytes
     const paddedMessage = messageHex.clone();
     const extraBytes = messageHex.sigBytes % 8;
     if (extraBytes !== 0) {
