@@ -74,12 +74,12 @@ function performTripleDESEncryption(text, key) {
     }
 
     // 将字节流转为hex字符串
-    const textHex = textBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');
+    let textHex = textBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');
 
     // 补零到8字节的倍数
-    const paddingLength = 8 - (textHex.length % 16); // 注意：这里是16，也就是8字节的倍数
-    if (paddingLength !== 8) {
-        textHex += Array(paddingLength * 2).join('00');
+    const paddingLength = (8 - (textHex.length / 2) % 8) % 8;
+    if (paddingLength > 0) {
+        textHex += '00'.repeat(paddingLength);
     }
 
     // 将hex字符串转为字节
