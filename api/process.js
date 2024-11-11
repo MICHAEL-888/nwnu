@@ -53,16 +53,7 @@ function g(i, i2) {
 function performTripleDESEncryption(text, key) {
     const keyHex = CryptoJS.enc.Hex.parse(key);
     const messageHex = CryptoJS.enc.Utf8.parse(text);
-
-    // 确保消息长度是8字节的倍数
-    const paddedMessage = messageHex.clone();
-    const extraBytes = messageHex.sigBytes % 8;
-    if (extraBytes !== 0) {
-        const paddingBytes = 8 - extraBytes;
-        paddedMessage.concat(CryptoJS.lib.WordArray.create([], paddingBytes));
-    }
-
-    const encrypted = CryptoJS.TripleDES.encrypt(paddedMessage, keyHex, {
+    const encrypted = CryptoJS.TripleDES.encrypt(messageHex, keyHex, {
         mode: CryptoJS.mode.ECB,
         padding: CryptoJS.pad.ZeroPadding
     });
