@@ -51,50 +51,23 @@ function g(i, i2) {
 }
 
 function performTripleDESEncryption(text, key) {
-    // 将text转为GBK2312编码的字节流
-    const textBytes = [];
-    for (let i = 0; i < text.length; i++) {
-        const codePoint = text.charCodeAt(i);
-        if (codePoint < 0x80) {
-            textBytes.push(codePoint);
-        } else if (codePoint < 0x10000) {
-            const bytes = [
-                (codePoint >> 8) & 0xFF,
-                codePoint & 0xFF
-            ];
-            textBytes.push(...bytes);
-        } else {
-            const bytes = [
-                (codePoint >> 16) & 0xFF,
-                (codePoint >> 8) & 0xFF,
-                codePoint & 0xFF
-            ];
-            textBytes.push(...bytes);
-        }
-    }
-
-    // 将字节流转为hex字符串
-    let textHex = textBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');
-
-    // 补零到8字节的倍数
-    const paddingLength = (8 - (textHex.length / 2) % 8) % 8;
-    if (paddingLength > 0) {
-        textHex += '00'.repeat(paddingLength);
-    }
-
-    // 将hex字符串转为字节
-    const messageHex = CryptoJS.enc.Hex.parse(textHex);
-
     const keyHex = CryptoJS.enc.Hex.parse(key);
-    const encrypted = CryptoJS.TripleDES.encrypt(messageHex, keyHex, {
+    const messageHex = CryptoJS.enc.Utf8.parse(text);
+
+    // 确保消息长度是8字节的倍数
+    const paddedMessage = messageHex.clone();
+    const extraBytes = messageHex.sigBytes % 8;
+    if (extraBytes !== 0) {
+        const paddingBytes = 8 - extraBytes;
+        paddedMessage.concat(CryptoJS.lib.WordArray.create([], paddingBytes));
+    }
+
+    const encrypted = CryptoJS.TripleDES.encrypt(paddedMessage, keyHex, {
         mode: CryptoJS.mode.ECB,
-        padding: CryptoJS.pad.NoPadding // 不使用PKCS#7填充
+        padding: CryptoJS.pad.ZeroPadding
     });
     return encrypted.ciphertext.toString(CryptoJS.enc.Hex);
 }
-
-
-
 
 function f(Code, length) {
     let i = 0;
