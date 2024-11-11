@@ -50,12 +50,12 @@ function g(i, i2) {
     return bArr2;
 }
 
-function performDESEncryption(text, key) {
+function performTripleDESEncryption(text, key) {
     const keyHex = CryptoJS.enc.Hex.parse(key);
     const messageHex = CryptoJS.enc.Utf8.parse(text);
-    const encrypted = CryptoJS.DES.encrypt(messageHex, keyHex, {
+    const encrypted = CryptoJS.TripleDES.encrypt(messageHex, keyHex, {
         mode: CryptoJS.mode.ECB,
-        padding: CryptoJS.pad.NoPadding
+        padding: CryptoJS.pad.Pkcs7
     });
     return encrypted.ciphertext.toString(CryptoJS.enc.Hex);
 }
