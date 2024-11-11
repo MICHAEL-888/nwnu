@@ -13,7 +13,7 @@ export default function handler(req, res) {
             const result = performDESEncryption(DES, key);
             res.status(200).json({ result });
         } else if (code && length) {
-            const result = f(new Uint8Array(code), length);
+            const result = f(stringToUint8Array(code), length);
             res.status(200).json({ result });
         } else {
             res.status(400).json({ error: 'Invalid input' });
@@ -63,4 +63,12 @@ function f(Code, length) {
         i = f1123a[((i >> 8) ^ Code[i2]) & 255] ^ (i << 8);
     }
     return 65535 & i;
+}
+
+function stringToUint8Array(str) {
+    const arr = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+        arr[i] = str.charCodeAt(i);
+    }
+    return arr;
 }
